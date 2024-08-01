@@ -56,8 +56,7 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	// записываем сериализованные в JSON данные в тело ответа
-	w.Write(resp)
-
+	_, _ = w.Write(resp)
 }
 
 func postTask(w http.ResponseWriter, r *http.Request) {
@@ -75,6 +74,11 @@ func postTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	_, ok := tasks[task.ID]
+	if ok {
+		http.Error(w, "Задача уже есть", http.StatusBadRequest)
+		return
+	}
 	tasks[task.ID] = task
 
 	w.Header().Set("Content-Type", "application/json")
@@ -111,9 +115,10 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	delete(tasks, id)
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Printf("Задача %v удалена", task)
+	fmt.Printf("Задача %v удалена /n", task)
 }
 
 func main() {
@@ -127,7 +132,7 @@ func main() {
 	r.Post("/task", postTask)
 	// регистрируем в роутере эндпоинт `/task/{id}` с методом GET, для которого используется обработчик `getTask`
 	r.Get("/task/{id}", getTask)
-	// регистрируем в роутере эндпоинт `/delete/{id}` с методом DELETE, для которого используется обработчик `deleteTask`
+	// регистрируем в роутере эндпоинт `/tasks/{id}` с методом DELETE, для которого используется обработчик `deleteTask`
 	r.Delete("/tasks/{id}", deleteTask)
 
 	if err := http.ListenAndServe(":8080", r); err != nil {
