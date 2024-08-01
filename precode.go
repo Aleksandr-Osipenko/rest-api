@@ -56,7 +56,10 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	// записываем сериализованные в JSON данные в тело ответа
-	_, _ = w.Write(resp)
+	_, err2 := w.Write(resp)
+	if err2 != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 }
 
 func postTask(w http.ResponseWriter, r *http.Request) {
