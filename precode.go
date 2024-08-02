@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -58,7 +59,7 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	// записываем сериализованные в JSON данные в тело ответа
 	_, err2 := w.Write(resp)
 	if err2 != nil {
-		http.Error(w, err2.Error(), http.StatusBadRequest)
+		log.Printf("Ошибка: %s\n", err2.Error())
 	}
 }
 
